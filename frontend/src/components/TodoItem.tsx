@@ -27,17 +27,17 @@ export default function TodoItem({ todo }: TodoItemProps) {
   };
 
   return (
-    <li className="group flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm transition hover:shadow-md">
+    <li className='group flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm transition hover:shadow-md'>
       <input
-        type="checkbox"
+        type='checkbox'
         checked={todo.completed}
         onChange={toggleCompleted}
-        className="h-5 w-5 shrink-0 cursor-pointer rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+        className='h-5 w-5 shrink-0 cursor-pointer rounded border-slate-300 text-indigo-600 focus:ring-indigo-500'
       />
 
       {isEditing ? (
         <input
-          type="text"
+          type='text'
           value={draftTitle}
           autoFocus
           onChange={(e) => setDraftTitle(e.target.value)}
@@ -49,12 +49,12 @@ export default function TodoItem({ todo }: TodoItemProps) {
               setIsEditing(false);
             }
           }}
-          className="flex-1 rounded border border-indigo-300 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className='flex-1 rounded border border-indigo-300 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500'
         />
       ) : (
         <span
           onDoubleClick={() => setIsEditing(true)}
-          className={`flex-1 cursor-text select-none text-sm ${
+          className={`flex-1 cursor-text select-none text-sm font-mono ${
             todo.completed ? 'text-slate-400 line-through' : 'text-slate-800'
           }`}
         >
@@ -65,7 +65,7 @@ export default function TodoItem({ todo }: TodoItemProps) {
       <button
         onClick={() => deleteTodo.mutate(todo.id)}
         disabled={deleteTodo.isPending}
-        className="shrink-0 rounded-md px-2 py-1 text-xs font-medium text-slate-400 opacity-0 transition hover:bg-red-50 hover:text-red-600 group-hover:opacity-100 disabled:opacity-50"
+        className='shrink-0 rounded-md px-2 py-1 text-xs font-medium text-slate-400 opacity-0 transition hover:bg-red-50 hover:text-red-600 group-hover:opacity-100 disabled:opacity-50'
         aria-label={`Delete ${todo.title}`}
       >
         Delete
