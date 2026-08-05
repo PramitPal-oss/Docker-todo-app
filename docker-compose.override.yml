@@ -1,0 +1,26 @@
+services:
+  db:
+    ports:
+      - '5432:5432'
+
+  backend:
+    build:
+      target: development
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: npm run dev
+
+  frontend:
+    build:
+      target: development
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+    command: npm run dev -- --host
