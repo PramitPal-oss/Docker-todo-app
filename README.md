@@ -36,7 +36,7 @@ cd backend
 cp .env.example .env
 # edit .env with your PostgreSQL credentials
 npm install
-npm run db:init      # creates the `todos` and `error_logs` tables
+npm run db:init:dev   # creates the `todos` and `error_logs` tables
 npm run dev           # starts the API on http://localhost:5000
 ```
 
@@ -45,7 +45,8 @@ Backend scripts:
 - `npm run dev` — run with nodemon + ts-node (auto-restart on changes)
 - `npm run build` — compile TypeScript to `dist/`
 - `npm start` — run the compiled build
-- `npm run db:init` — apply `src/db/schema.sql` to your database
+- `npm run db:init` — apply `schema.sql` to your database (runs the **compiled** `dist/db/init.js`; requires `npm run build` first)
+- `npm run db:init:dev` — same, but via `ts-node` straight from `src/` (no build needed)
 
 Logs are written to `backend/logs/` (`combined.log`, `error.log`, `exceptions.log`, `rejections.log`), and `warn`/`error` level logs are also inserted into the `error_logs` table. You can inspect recent DB-stored logs via:
 
@@ -81,4 +82,31 @@ npm run dev            # starts the app on http://localhost:5173
 - The custom Winston Postgres transport is fire-and-forget: if the DB insert fails, it logs to console only and never crashes the app.
 - Double-click a todo's text in the UI to edit it inline; press Enter to save or Escape to cancel.
 
-> docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+## Running with Docker
+
+```bash
+# development
+docker compose up --build
+
+# production (e.g. on EC2)
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+```
+
+### Database migrations
+
+The stack includes a one-shot `migrate` service that applies `schema.sql` and
+exits. `backend` declares `depends_on: migrate: service_completed_successfully`,
+so the schema is always in place before the API boots — there is nothing to run
+by hand. `schema.sql` uses `CREATE ... IF NOT EXISTS`, so it is safe to re-apply
+on every `up`.
+
+To apply the schema manually against a running stack:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm migrate
+```
+
+Note that the production image is built with `npm ci --omit=dev` and ships only
+`dist/`, so `ts-node` is not available inside it. `npm run build` therefore
+copies `src/db/*.sql` into `dist/db/`, and `db:init` runs the compiled
+`dist/db/init.js`.

@@ -3,6 +3,15 @@ services:
     ports:
       - '5432:5432'
 
+  # In dev there is no compiled dist/, so run the schema through ts-node.
+  migrate:
+    build:
+      target: development
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: npm run db:init:dev
+
   backend:
     build:
       target: development
