@@ -31,8 +31,6 @@ services:
     build: ./frontend
     env_file:
       - ./frontend/.env
-    stdin_open: true
-    tty: true
     depends_on:
       - backend
     networks:
